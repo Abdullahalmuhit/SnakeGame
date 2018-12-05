@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>snake game</title>
+<link href="snakegame.css" rel="stylesheet" type="text/css">
+ <style type="text/css">
+        canvas {
+            border: 1px solid black;
+           
+            background-size: 200px 200px;
+            background-position-y: -81px;
+			background:#336699;
+        }
+        </style>
+</head>
+<body>
+   <div id="canvas">
+        <canvas id="myCanvas" width="800" height="500" ></canvas>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+ 
+//fo get the canvas value
+var canvas=document.getElementById("myCanvas");
+var ctx=canvas.getContext("2d");
+var dir,score,balls,food;
+
+//initialize the diclared value and make the ball
+
+function init()
+{
+   dir='right';
+   score=0;
+   balls=[
+   {x:40,y:40},
+   {x:60,y:40},
+   {x:80,y:40},
+   
+   ];
+       createfood();
+   }
+function createfood(){
+               food={x:Math.floor(Math.random()*39), y:Math.floor(Math.random()*24)}
+			   
+			   //if create a food on the snake, then we create an new food
+			   for(var i=0;i<balls.length;i++)
+			   {
+			       var ball=balls[i];
+			       
+			      if(food.x == ball.x && food.y == ball.y){
+				  createfood();
+				    
+				  }
+			   }
+         }
+   init();
+   
+   document.addEventListener("keydown",function(e){
+   var keyCode=e.keyCode;
+   if(keyCode == 37 && dir != 'right' ){
+    dir = 'left';
+	}
+	if(keyCode == 38 && dir != 'down' ){
+    dir = 'up';
+	}
+	if(keyCode == 39 && dir != 'left' ){
+    dir = 'right';
+	}
+	if(keyCode == 40 && dir != 'up'){
+    dir = 'down';
+	}
+	
+   });
+   
+   //when balls run then remove a ball and add a ball
+   
+   function add()
+   {
+     var lastball = balls[balls.length-1];
+	 if(dir == 'right')
+	 {
+	   balls.push({x:lastball.x +20, y:lastball.y});
+	 }
+	  if(dir == 'down')
+	 {
+	   balls.push({x:lastball.x, y:lastball.y +20});
+	 }
+	  if(dir == 'left')
+	 {
+	   balls.push({x:lastball.x -20, y:lastball.y});
+	 }
+	  if(dir == 'up')
+	 {
+	   balls.push({x:lastball.x, y:lastball.y-20});
+	 }
+	 
+   }
+   
+   //vidualize the ball and run the balls from right to left
+   
+   function ani()
+   {
+      ctx.clearRect(0,0,888,555);
+	  balls.shift();
+	  add();
+	  
+	  //when snake eat a food then increase snake and add score
+	  var lastball = balls[balls.length-1];
+	  if(lastball.x == food.x*20 && lastball.y == food.y*20 )
+	  {
+	     score += 5;
+		 add();
+		 createfood();
+	  }
+	
+	  for(i=0;i<balls.length;i++){
+	  ball=balls[i];
+	  if(i==balls.length-1)
+	  {
+	      ctx.fillStyle = "yellow";
+	  }
+	  else{
+	   ctx.fillStyle = "#ff0000";
+	  }
+	  if(ball.x>780)
+	  {
+	     ball.x=0;
+	  }
+	  if(ball.x<0)
+	  {
+	     ball.x=780;
+	  }
+	  if(ball.y>480)
+	  {
+	     ball.y=0;
+	  }
+	  if(ball.y<0)
+	  {
+	     ball.y=480;
+	  }
+	  if(ball.x == lastball.x && ball.y == lastball.y && i < balls.length-2)
+	  {
+	     alert("game over, your score is:"+score);
+		 init();
+	  }
+	  
+	  ctx.fillRect(ball.x,ball.y,19,19);
+	  
+	  }
+	  // food drawing 
+	   ctx.fillRect(food.x*20,food.y*20,19,19);
+	   ctx.fillText("Score:"+score,480,480);
+   }
+   setInterval(ani,90);
+
+</script>
+
+</body>
+</html>
